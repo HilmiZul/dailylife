@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#1f2a25" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta
+      name="description"
+      content="Daily Life, game 3D slice-of-life di kota kecil dengan kastil di pusatnya."
+    />
+    <title>Daily Life</title>
+    <script type="module" crossorigin src="./assets/index-iI1Yt3zh.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CZdHwV2n.css">
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene" aria-label="Pemandangan kota Daily Life"></canvas>
+
+      <div id="ui">
+        <section id="loading-screen" class="screen screen--solid">
+          <div class="loading__inner">
+            <p class="eyebrow" data-i18n="loading.eyebrow">Sebuah sore di kota kecil</p>
+            <h1 class="wordmark">Daily Life</h1>
+            <div class="loading__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+              <span id="loading-progress"></span>
+            </div>
+            <p id="loading-label" class="loading__label" data-i18n="loading.preparing">Menyiapkan kota...</p>
+          </div>
+        </section>
+
+        <section id="title-screen" class="screen" hidden>
+          <div class="title__scrim"></div>
+          <div class="title__content">
+            <header class="title__header">
+              <p class="eyebrow" data-i18n="title.eyebrow">Kota kecil, hari yang tenang</p>
+              <h1 class="wordmark">Daily Life</h1>
+              <p class="title__subtitle" data-i18n="title.subtitle">
+                Tinggal sebentar. Berjalan keliling. Kenali kotanya.
+              </p>
+            </header>
+
+            <nav class="title__menu" aria-label="Menu utama">
+              <button id="btn-continue" class="menu-item" hidden data-i18n="title.continue">Lanjutkan</button>
+              <button id="btn-start" class="menu-item menu-item--primary" data-i18n="title.start">Mulai</button>
+              <button id="btn-settings" class="menu-item" data-i18n="title.settings">Pengaturan</button>
+              <button id="btn-credits" class="menu-item" data-i18n="title.credits">Kredit</button>
+            </nav>
+
+            <footer class="title__footer">
+              <div class="lang-switch" role="group" aria-label="Language">
+                <button data-lang="id" class="lang-switch__item">ID</button>
+                <span aria-hidden="true">/</span>
+                <button data-lang="en" class="lang-switch__item">EN</button>
+              </div>
+              <p class="title__meta" data-i18n="title.meta">Dibuat dengan Blender dan WebGL</p>
+            </footer>
+          </div>
+        </section>
+
+        <section id="select-screen" class="screen screen--solid" hidden>
+          <div class="select__content">
+            <header class="select__header">
+              <button id="btn-select-back" class="text-button" data-i18n="common.back">Kembali</button>
+              <p class="eyebrow" data-i18n="select.eyebrow">Pilih siapa yang berjalan hari ini</p>
+              <h2 data-i18n="select.title">Karakter</h2>
+            </header>
+
+            <div class="select__body">
+              <div class="select__preview">
+                <canvas id="preview-canvas" aria-label="Pratinjau karakter"></canvas>
+                <div class="select__preview-caption">
+                  <span id="preview-name">-</span>
+                  <span id="preview-note">-</span>
+                </div>
+              </div>
+
+              <div class="select__controls">
+                <div class="segmented" role="tablist" aria-label="Karakter">
+                  <button role="tab" data-gender="male" class="segmented__item">Laki-laki</button>
+                  <button role="tab" data-gender="female" class="segmented__item">Perempuan</button>
+                </div>
+
+                <div id="outfit-list" class="outfit-list" role="listbox" aria-label="Outfit"></div>
+
+                <button id="btn-confirm" class="button button--primary" data-i18n="select.confirm">
+                  Mulai hari
+                </button>
+                <p class="select__hint" data-i18n="select.hint">
+                  Penampilan tidak mengubah cerita. Pilih yang paling terasa seperti Anda.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div id="hud" hidden>
+          <div class="hud__top">
+            <div class="hud__clock">
+              <span id="hud-day">Hari 1</span>
+              <span id="hud-time">07:00</span>
+            </div>
+            <div class="hud__place" id="hud-place">Alun-alun</div>
+          </div>
+
+          <div class="hud__journal-hint">
+            <p class="eyebrow" data-i18n="hud.today">Hari ini</p>
+            <ul id="hud-activities"></ul>
+          </div>
+
+          <div id="interaction-prompt" class="prompt" hidden>
+            <kbd>E</kbd>
+            <span id="interaction-label"></span>
+          </div>
+
+          <div class="hud__bottom">
+            <div class="hud__controls">
+              <span><kbd>WASD</kbd> <span data-i18n="hud.walk">jalan</span></span>
+              <span><kbd>Shift</kbd> <span data-i18n="hud.run">lari</span></span>
+              <span><kbd>Space</kbd> <span data-i18n="hud.jump">loncat</span></span>
+              <span><kbd>J</kbd> <span data-i18n="hud.journal">jurnal</span></span>
+            </div>
+            <button id="btn-pause" class="icon-button" aria-label="Pause">
+              <span data-i18n="hud.pause">Jeda</span>
+            </button>
+          </div>
+        </div>
+
+        <section id="dialog" class="dialog" hidden aria-live="polite">
+          <div class="dialog__portrait" id="dialog-portrait"></div>
+          <div class="dialog__body">
+            <p class="dialog__speaker" id="dialog-speaker"></p>
+            <p class="dialog__text" id="dialog-text"></p>
+            <button id="btn-dialog-next" class="text-button" data-i18n="dialog.next">Lanjut</button>
+          </div>
+        </section>
+
+        <section id="journal" class="panel" hidden aria-label="Jurnal harian">
+          <header class="panel__header">
+            <div>
+              <p class="eyebrow" data-i18n="journal.eyebrow">Catatan kecil</p>
+              <h2 data-i18n="journal.title">Hari ini</h2>
+            </div>
+            <button id="btn-journal-close" class="icon-button" aria-label="Tutup">×</button>
+          </header>
+          <div id="journal-body" class="panel__body"></div>
+        </section>
+
+        <section id="pause-screen" class="screen screen--veil" hidden>
+          <div class="panel panel--modal">
+            <header class="panel__header">
+              <div>
+                <p id="pause-eyebrow" class="eyebrow" data-i18n="pause.eyebrow">Berhenti sebentar</p>
+                <h2 id="pause-title" data-i18n="pause.title">Jeda</h2>
+              </div>
+              <button id="btn-pause-close" class="icon-button" aria-label="Tutup">×</button>
+            </header>
+            <div class="panel__body settings">
+              <label class="setting">
+                <span data-i18n="settings.language">Bahasa</span>
+                <select id="setting-language">
+                  <option value="id">Bahasa Indonesia</option>
+                  <option value="en">English</option>
+                </select>
+              </label>
+              <label class="setting">
+                <span data-i18n="settings.quality">Kualitas grafis</span>
+                <select id="setting-quality">
+                  <option value="low" data-i18n="settings.qualityLow">Rendah</option>
+                  <option value="high" data-i18n="settings.qualityHigh">Tinggi</option>
+                </select>
+              </label>
+              <label class="setting">
+                <span data-i18n="settings.curve">Efek kelengkungan</span>
+                <input id="setting-curve" type="range" min="0" max="1.5" step="0.1" value="1" />
+              </label>
+              <label class="setting">
+                <span data-i18n="settings.sensitivity">Sensitivitas kamera</span>
+                <input id="setting-sensitivity" type="range" min="0.4" max="2" step="0.1" value="1" />
+              </label>
+              <label class="setting">
+                <span data-i18n="settings.volume">Volume</span>
+                <input id="setting-volume" type="range" min="0" max="1" step="0.1" value="0.7" />
+              </label>
+              <div class="panel__actions">
+                <button id="btn-reset-save" class="text-button text-button--danger" data-i18n="settings.reset">
+                  Hapus progres
+                </button>
+                <button id="btn-pause-resume" class="button button--primary" data-i18n="common.resume">
+                  Kembali bermain
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="credits-screen" class="screen screen--veil" hidden>
+          <div class="panel panel--modal panel--credits">
+            <header class="panel__header">
+              <div>
+                <p class="eyebrow" data-i18n="credits.eyebrow">Terima kasih</p>
+                <h2 data-i18n="credits.title">Kredit</h2>
+              </div>
+              <button id="btn-credits-close" class="icon-button" aria-label="Tutup">×</button>
+            </header>
+            <div class="panel__body" id="credits-body"></div>
+          </div>
+        </section>
+
+        <div id="toast" class="toast" hidden></div>
+        <div id="fade" class="fade"></div>
+      </div>
+    </div>
+  </body>
+</html>
