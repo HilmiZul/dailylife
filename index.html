@@ -10,12 +10,12 @@
       content="Daily Life, game 3D slice-of-life di kota kecil dengan kastil di pusatnya."
     />
     <title>Daily Life</title>
-    <script type="module" crossorigin src="./assets/index-Djk4PL5D.js"></script>
-    <link rel="modulepreload" crossorigin href="./assets/three-core-Db6dYe2h.js">
-    <link rel="modulepreload" crossorigin href="./assets/three-addons-ChMfKss7.js">
-    <link rel="modulepreload" crossorigin href="./assets/three-CgA_nFmk.js">
+    <script type="module" crossorigin src="./assets/index-2pYsw9GP.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/three-core-3Iel1C3X.js">
+    <link rel="modulepreload" crossorigin href="./assets/three-addons-ZSdQ7Qfd.js">
+    <link rel="modulepreload" crossorigin href="./assets/three-DH70dvMo.js">
     <link rel="modulepreload" crossorigin href="./assets/i18next-BrZwiATk.js">
-    <link rel="stylesheet" crossorigin href="./assets/index-CZdHwV2n.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-CkgQu-c4.css">
   </head>
   <body>
     <div id="app">
@@ -24,12 +24,13 @@
       <div id="ui">
         <section id="loading-screen" class="screen screen--solid">
           <div class="loading__inner">
-            <p class="eyebrow" data-i18n="loading.eyebrow">Sebuah sore di kota kecil</p>
+            <p id="loading-eyebrow" class="eyebrow" data-i18n="loading.eyebrow">Sebuah pagi di kota kecil</p>
             <h1 class="wordmark">Daily Life</h1>
             <div class="loading__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
               <span id="loading-progress"></span>
             </div>
             <p id="loading-label" class="loading__label" data-i18n="loading.preparing">Menyiapkan kota...</p>
+            <p id="loading-time" class="loading__time"></p>
           </div>
         </section>
 
@@ -42,6 +43,7 @@
               <p class="title__subtitle" data-i18n="title.subtitle">
                 Tinggal sebentar. Berjalan keliling. Kenali kotanya.
               </p>
+              <p id="title-time" class="title__time"></p>
             </header>
 
             <nav class="title__menu" aria-label="Menu utama">
@@ -102,7 +104,7 @@
           <div class="hud__top">
             <div class="hud__clock">
               <span id="hud-day">Hari 1</span>
-              <span id="hud-time">07:00</span>
+              <span id="hud-time">06:00</span>
             </div>
             <div class="hud__place" id="hud-place">Alun-alun</div>
           </div>
@@ -137,6 +139,30 @@
             <p class="dialog__speaker" id="dialog-speaker"></p>
             <p class="dialog__text" id="dialog-text"></p>
             <button id="btn-dialog-next" class="text-button" data-i18n="dialog.next">Lanjut</button>
+          </div>
+        </section>
+
+        <section id="cafe-menu" class="cafe-menu" hidden aria-label="Menu kafe">
+          <div class="cafe-menu__scrim"></div>
+          <div class="cafe-menu__panel" role="dialog" aria-modal="true" aria-labelledby="cafe-menu-title">
+            <header class="cafe-menu__header">
+              <div>
+                <p id="cafe-menu-eyebrow" class="eyebrow" data-i18n="cafe.menu.eyebrow">TerrasKastil.</p>
+                <h2 id="cafe-menu-title" data-i18n="cafe.menu.title">Menu</h2>
+                <p id="cafe-menu-meta" class="cafe-menu__meta"></p>
+              </div>
+              <button id="btn-cafe-close" class="icon-button" data-i18n-aria-label="common.close" aria-label="Tutup">×</button>
+            </header>
+            <div class="cafe-menu__body">
+              <ul id="cafe-menu-items" class="cafe-menu__items"></ul>
+              <figure class="cafe-menu__preview">
+                <canvas id="cafe-preview-canvas" aria-label="Pratinjau minuman"></canvas>
+                <figcaption id="cafe-preview-caption"></figcaption>
+              </figure>
+            </div>
+            <p class="cafe-menu__hint" data-i18n="cafe.menu.hint">
+              Arahkan ke menu untuk mendengar penjelasan barista.
+            </p>
           </div>
         </section>
 
@@ -179,6 +205,10 @@
                 <span data-i18n="settings.curve">Efek kelengkungan</span>
                 <input id="setting-curve" type="range" min="0" max="1.5" step="0.1" value="1" />
               </label>
+              <label class="setting setting--toggle">
+                <span data-i18n="settings.realTime">Mulai dari waktu nyata</span>
+                <input id="setting-realtime" type="checkbox" checked />
+              </label>
               <label class="setting">
                 <span data-i18n="settings.sensitivity">Sensitivitas kamera</span>
                 <input id="setting-sensitivity" type="range" min="0.4" max="2" step="0.1" value="1" />
@@ -212,6 +242,7 @@
           </div>
         </section>
 
+        <div id="bubbles" class="bubbles" aria-live="polite"></div>
         <div id="toast" class="toast" hidden></div>
         <div id="fade" class="fade"></div>
       </div>
